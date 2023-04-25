@@ -4,8 +4,22 @@ import { Context, server } from "../main";
 import { toast } from "react-hot-toast";
 import TodoItem from "../components/TodoItem";
 import { Navigate } from "react-router-dom";
+import useSpeechRecognition from "../hooks/useSpeechRecognitionHook";
 
 const Home = () => {
+
+
+  const {
+    text,
+    isListening,
+    startListening,
+    stopListening,
+    hasRecognitionSupport,
+  } = useSpeechRecognition();
+
+
+
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
@@ -88,13 +102,20 @@ const Home = () => {
   if (!isAuthenticated) return <Navigate to={"/login"} />;
 
   return (
-    <div className="container">
+
+
+
+
+    
+      <>
+      <div className="container">
       <div className="login">
         <section>
           <form onSubmit={submitHandler}>
             <input
               type="text"
               placeholder="Title"
+
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -107,6 +128,21 @@ const Home = () => {
               onChange={(e) => setDescription(e.target.value)}
             />
 
+<div>
+{hasRecognitionSupport ? (
+  <>
+              <div>
+              <button onClick={startListening}>Start</button>
+              </div>
+              
+            {isListening ?
+              <div>Your browser is currently listening</div>
+            :null}
+</>
+):(
+  <h1>Your browser has no speech recognition</h1>
+)}
+</div>
             <button disabled={loading} type="submit">
               Add Task
             </button>
@@ -114,6 +150,9 @@ const Home = () => {
         </section>
       </div>
 
+    </div>
+      
+      
       <section className="todosContainer">
         {tasks.map((i) => (
           <TodoItem
@@ -125,9 +164,10 @@ const Home = () => {
             id={i._id}
             key={i._id}
           />
-        ))}
+          ))}
       </section>
-    </div>
+          </>
+
   );
 };
 
